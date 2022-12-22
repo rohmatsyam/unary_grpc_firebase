@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package unary_grpc;
 
-import "pagination.proto";
-
 option go_package="unary_grpc/pb/product";
 
 service ProductService {
@@ -14,9 +12,8 @@ service ProductService {
   rpc DeleteProduct(Id) returns (Status);
 }
 
-message Products {
-  Pagination pagination=1;
-  repeated Product data=2;
+message Products {  
+  repeated Product data=1;
 }
 
 message Product {

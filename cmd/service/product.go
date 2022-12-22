@@ -20,7 +20,6 @@ func (p *ProductService) GetProducts(ctx context.Context, empty *productPb.Empty
 	colName := helpers.GetEnv()
 
 	var products []*productPb.Product
-
 	iter := p.Client.Collection(colName).Documents(ctx)
 	for {
 		doc, err := iter.Next()
@@ -36,26 +35,13 @@ func (p *ProductService) GetProducts(ctx context.Context, empty *productPb.Empty
 		if err != nil {
 			return nil, err
 		}
-		// log.Println(category["Id"].(int64))
-		// log.Println(product)
 		products = append(products, product)
 	}
-	// category := doc.Data()["ProductCategory"].(map[string]interface{})
 
-	// var product *productPb.Product
-	// result, err := p.Client.Collection(colName).Doc("2").Get(ctx)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// log.Println(product.Data())
-	// log.Println(category["Id"].(int64))
-	// result.DataTo(&product)
-	// log.Println(product)
-
-	log.Println(products)
-
-	return nil, nil
+	result := &productPb.Products{
+		Data: products,
+	}
+	return result, nil
 }
 
 func (p *ProductService) GetProduct(ctx context.Context, id *productPb.Id) (*productPb.Product, error) {
@@ -103,4 +89,19 @@ func (p *ProductService) CreateProduct(ctx context.Context, product *productPb.P
 
 	Response.Id = product.Id
 	return &Response, nil
+}
+
+func (p *ProductService) DeleteProduct(ctx context.Context, id *productPb.Id) (*productPb.Status, error) {
+	var response productPb.Status
+	colName := helpers.GetEnv()
+	idString := strconv.FormatInt(int64(id.GetId()), 10)
+
+	_, err := p.Client.Collection(colName).Doc(idString).Delete(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	response.Status = 1
+
+	return &response, nil
 }
