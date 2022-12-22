@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package unary_grpc;
+
+import "pagination.proto";
+
+option go_package="unary_grpc/pb/product";
+
+service ProductService {
+  rpc GetProducts(Empty) returns (Products);
+  rpc GetProduct(Id) returns (Product);
+  rpc CreateProduct(Product) returns (Id);
+  rpc UpdateProduct(Id) returns (Product);
+  rpc DeleteProduct(Id) returns (Status);
+}
+
+message Products {
+  Pagination pagination=1;
+  repeated Product data=2;
+}
+
+message Product {
+  int64 id = 1;
+  string name = 2;
+  double price = 3; // double or float
+  int64 stock = 4;
+  ProductCategory productCategory = 5;
+}
+
+message ProductCategory {
+  int64 id = 1;
+  string name = 2;
+}
+
+message Empty {};
+
+message Id {
+  int64 id = 1;
+}
+
+message Status {
+  uint32 status =1;
+}
